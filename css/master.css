@@ -1,0 +1,26 @@
+@font-face {
+    font-family: ProximaNovaSemibold;
+    src: url(fonts/ProximaNova-Sbold-webfont.woff);
+}
+
+@font-face {
+    font-family: ProximaNovaRegular;
+    src: url(fonts/ProximaNova-Reg-webfont.woff);
+}
+
+@font-face {
+    font-family: ProximaNovaLight;
+    src: url(fonts/ProximaNova-Light-webfont.woff);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #333;
+}
+
+.image {
+  filter: grayscale(100%); 
+  -webkit-filter: grayscale(100%);
+  filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 1 0\'/></filter></svg>#grayscale");
+}
