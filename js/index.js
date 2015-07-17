@@ -19,6 +19,37 @@ var imageFilenames = [
   "would-a-brick.png",
   "writing-arguement.png",
 ];
+var contentTypes = [
+  "article",
+  "exercise",
+  "video",
+];
+var styles = [
+  {
+    icon: {
+      opacity: "0",
+    },
+    colorOverlay: {
+      opacity: "0",
+    },
+    image: {
+    }
+  },
+  {
+    icon: {
+      opacity: "1",
+      mixBlendMode: "screen",
+    },
+    colorOverlay: {
+      opacity: "1",
+      backgroundColor: "#E38A9E",
+      mixBlendMode: "hard-light"
+    },
+    image: {
+      webkitFilter: "grayscale(100%)",
+    }
+  }
+];
 
 var randomNumber = function(min, max) {
   if (min > max) {
@@ -40,34 +71,41 @@ var getRandomImageURL = function() {
   return "images/thumbnails/" + imageFilenames[i];
 };
 
-$(document).ready(function() {
+var getRandomIconURL = function(size) {
+  if (size == null) {
+    size = 24;
+  }
+  var i = randomInteger(0, contentTypes.length - 1);
+  var filename = "content-icon-" + contentTypes[i] + "-" + size + ".png";
+  return "images/icons/" + filename;
+};
+
+var applyBaseStyle = function() {
   var thumbnails = $(".thumbnail");
   thumbnails.each(function(i, t) {
     var thumbnail = $(t);
-    var imageURL = getRandomImageURL();
     
-    var image = $("<div class=\"image\"></div>");
-    image.css({
-      position: "absolute",
-      left: "0",
-      top: "0",
-      width: "100%",
-      height: "100%",
-      background: "rgba(255, 0, 128, 1.0) url(" + imageURL + ") no-repeat center",
-      backgroundSize: "cover",
-      filter: "grayscale(100%)",
+    var w = thumbnail.width();
+    var h = thumbnail.height();
+    var iconSize = (h > 60) ? 48 : 24;
+    var iconX = w / 2 - iconSize / 2;
+    var iconY = h / 2 - iconSize / 2;
+    
+    var imageURL = getRandomImageURL();
+    var iconURL = getRandomIconURL(iconSize);
+    
+    var icon = thumbnail.find(".icon");
+    icon.css({
     });
     
-    var colorOverlay = $("<div></div>");
+    var colorOverlay = thumbnail.find(".color-overlay");
     colorOverlay.css({
-      position: "absolute",
-      left: "0",
-      top: "0",
-      width: "100%",
-      height: "100%",
-      backgroundColor: "#E38A9E",
-      opacity: "1.0",
-      mixBlendMode: "hard-light"
+    });
+    
+    var image = thumbnail.find(".image");
+    image.css({
+      opacity: "1",
+      webkitFilter: "none",
     });
     
     thumbnail.css({
@@ -76,5 +114,79 @@ $(document).ready(function() {
     });
     thumbnail.append(image);
     thumbnail.append(colorOverlay);
+    thumbnail.append(icon);
+  });
+};
+
+var applyStyle = function(styleID) {
+  applyBaseStyle();
+  
+  if (styleID < 1 || styleID > styles.length) {
+    return;
+  }
+  
+  var css = styles[styleID - 1];
+  
+  var icons = $(".icon");
+  icons.each(function(i, e) {
+    $(e).css(css.icon);
+  });
+  
+  var colorOverlays = $(".color-overlay");
+  colorOverlays.each(function(i, e) {
+    $(e).css(css.colorOverlay);
+  });
+  
+  var images = $(".image");
+  images.each(function(i, e) {
+    $(e).css(css.image);
+  });
+};
+
+$(document).ready(function() {
+  var thumbnails = $(".thumbnail");
+  thumbnails.each(function(i, t) {
+    var thumbnail = $(t);
+    
+    var w = thumbnail.width();
+    var h = thumbnail.height();
+    var iconSize = (h > 60) ? 48 : 24;
+    var iconX = w / 2 - iconSize / 2;
+    var iconY = h / 2 - iconSize / 2;
+    
+    var imageURL = getRandomImageURL();
+    var iconURL = getRandomIconURL(iconSize);
+    
+    var icon = $("<div class=\"icon\"></div>");
+    icon.css({
+      left: iconX + "px",
+      top: iconY + "px",
+      width: iconSize + "px",
+      height: iconSize + "px",
+      background: "url(" + iconURL + ") no-repeat center"
+    });
+    
+    var colorOverlay = $("<div class=\"color-overlay\"></div>");
+    
+    var image = $("<div class=\"image\"></div>");
+    image.css({
+      background: "url(" + imageURL + ") no-repeat center",
+      backgroundSize: "cover",
+    });
+    
+    thumbnail.css({
+      overflow: "hidden",
+      borderRadius: "4px",
+    });
+    thumbnail.append(image);
+    thumbnail.append(colorOverlay);
+    thumbnail.append(icon);
+  });
+  
+  applyStyle(1);
+  
+  $(document).keypress(function(e) {
+    var styleID = e.which - 48;
+    applyStyle(styleID);
   });
 });
